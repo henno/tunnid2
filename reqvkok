@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="robots" content="noindex"/><title>SISEVEEB :: Tunniplaan :: Valgamaa Kutseõppekeskus</title><link rel="stylesheet" type="text/css" href="/vkok/css/siseveeb.css"/><link rel="stylesheet" type="text/css" href="/vkok/css/siseveeb1.css"/><link rel="icon" href="https://vkok.siseveeb.ee/favicon.ico" /><link rel="shortcut icon" href="https://siseveeb.ee/icons/favicon.ico" type="image/x-icon" /><link rel="apple-touch-icon" href="https://siseveeb.ee/icons/apple-touch-icon.png" /><link rel="apple-touch-icon" sizes="57x57" href="https://siseveeb.ee/icons/apple-touch-icon-57x57.png" /><link rel="apple-touch-icon" sizes="72x72" href="https://siseveeb.ee/icons/apple-touch-icon-72x72.png" /><link rel="apple-touch-icon" sizes="76x76" href="https://siseveeb.ee/icons/apple-touch-icon-76x76.png" /><link rel="apple-touch-icon" sizes="114x114" href="https://siseveeb.ee/icons/apple-touch-icon-114x114.png" /><link rel="apple-touch-icon" sizes="120x120" href="https://siseveeb.ee/icons/apple-touch-icon-120x120.png" /><link rel="apple-touch-icon" sizes="144x144" href="https://siseveeb.ee/icons/apple-touch-icon-144x144.png" /><link rel="apple-touch-icon" sizes="152x152" href="https://siseveeb.ee/icons/apple-touch-icon-152x152.png" /><link rel="apple-touch-icon" sizes="180x180" href="https://siseveeb.ee/icons/apple-touch-icon-180x180.png" /></head><body><div id="content_div"><div id="program_div"><script src="/scripts/handlebars.min.js"></script>
+   <script src="/scripts/jquery-1.min.js"></script>
+   <script src="/scripts/bootstrap.min.js"></script>
+   <script src="/scripts/jquery.tablesorter.min.js"></script>
+   <script src="/scripts/jquery.asmselect.js"></script>
+   <script src="/scripts/jquery.tablesorter.widgets.min.js"></script>
+   <script src="/scripts/jquery-ui.min.js"></script>
+   <script src="/scripts/jquery-migrate-git.min.js"></script>
+   <script src="/scripts/general_old.js"></script>
+   <script src="/scripts/respond.min.js"></script>
+   <script src="/scripts/jquery.blockUI.js"></script><script type="text/javascript">
+   function error(error_string,form_id)
+{
+	$((form_id?"#"+form_id+" ":"")+"label").removeClass("error").attr("title","");
+	$((form_id?"#"+form_id+" ":"")+"input").removeClass("error");
+	$((form_id?"#"+form_id+" ":"")+"select").removeClass("error");
+	
+	if(error_string.substring(0,6)=="ERROR:")
+		var vead=error_string.substring(6).split("|");
+	else
+		var vead=error_string.split("|"); 
+	var x;
+	var alert_all=false;
+	for (x in vead)
+	if(x>0)
+    {
+		var a=vead[x].split("=");
+		var f=a[0].replace("[","\[").replace("]","\]");
+		var e=a[1];
+		if(alert_all) vead[0]=vead[0]+" "+e;
+		else if(f=="alert" && !alert_all) vead[0]=vead[0]+" "+e;
+		
+		if($("label[for='"+f+"']").length!=0) $("label[for='"+f+"']").addClass("error").attr("title",e);
+		else if($("label[for='"+f+"_span']").length!=0) $("label[for='"+f+"_span']").addClass("error").attr("title",e);
+		
+		else if($("#"+form_id+" label[for='"+f+"']").length!=0) $("#"+form_id+" label[for='"+f+"']").addClass("error").attr("title",e);
+		else if($("#"+form_id+" label[for='"+f+"_span']").length!=0) $("#"+form_id+" label[for='"+f+"_span']").addClass("error").attr("title",e);
+		
+		else $("#"+f).addClass("error");
+		if(f=="alert_all" && e=="yes") alert_all=true;
+	}
+	alert(vead[0]);
+}
+function post_form_data(form_id,action,button_value){
+$("#"+form_id).append('<input type="hidden" name="form_submit" value="' + button_value + '"/>');
+$.post(action, $("#"+form_id).serialize(),function(data){
+    if(data.substring(0,6)!="ERROR:") $("#program_content_div").html(data) 
+    else error(data,form_id);
+ }, "text");
+};
+function post_form_data2(form_id,action,button){
+var button_value=$(button).val();
+$(button).attr("disabled","disabled");
+$("#"+form_id).append('<input type="hidden" name="form_submit" value="' + button_value + '"/>');
+$.post(action, $("#"+form_id).serialize(),
+ function(data){
+ if(data.substring(0,4)=="URL:") window.location = data.split('URL:')[1];
+ else if(data.substring(0,6)!="ERROR:") $("#program_content_div").html(data);
+ else
+ {
+  error(data,form_id);
+  $(button).removeAttr("disabled");
+ }
+ }, "text");
+}
+function numbersonly(e, decimal,colon) {
+	var key;
+	var keychar;
+	if (window.event) {key = window.event.keyCode;}
+	else if (e) {key = e.which;}
+	else {return true;}
+	keychar = String.fromCharCode(key);
+	if ((key==null) || (key==0) || (key==8) || (key==9) || (key==13) || (key==27) ) {return true;}
+	else if ((("0123456789").indexOf(keychar) > -1)) {return true;}
+	else if (decimal && (keychar == ",")) {return true;}
+	else if (colon && (keychar == ":" || keychar == ".")) {return true;}
+	else return false;
+};
+$.blockUI.defaults.message = "<h1>Palun oodake!</h1><h3>Toimub andmevahetus serveriga.</h3>";
+$(document).ajaxStart($.blockUI).ajaxStop($.unblockUI);
+$(document).ready(function(){
+	$(".numbers").live("keypress",function(e){
+		return numbersonly(e,true,false);
+	});
+	$(".integers").live("keypress",function(e){
+		return numbersonly(e,false,false);
+	});
+	$(".times").live("keypress",function(e){
+		return numbersonly(e,false,true);
+	});
+	$(".times").live("change",function(e){
+		$(this).val($(this).val().replace(".",":"));
+	});
+	$(".form-date-field").live("click", function() {
+		$(this).datepicker({
+			showOn: 'focus',
+			dateFormat: 'dd.mm.yy',
+			changeMonth: true,
+			changeYear: true,
+			dayNamesMin: ['P', 'E', 'T', 'K', 'N', 'R', 'L'],
+			firstDay: 1,
+			nextText: 'Eelmine',
+			prevText: 'Järgmine',
+			monthNamesShort: ['Jaan','Veeb','Märts','Apr','Mai','Juun','Juul','Aug','Sept','Okt','Nov','Dets']
+		}).focus();
+	});
+    $("body").append('<div id="qTip"></div>');
+	$("[title]").live("mouseover",function(e) {
+		var elem=$(this).attr("type");
+		if(elem!="button")
+		{
+			var tip = $(this).attr("title");
+            if(tip.length)
+            {
+                $(this).attr("title","").attr("tiptitle",tip);
+                $("#qTip").html(tip).show();
+                if((e.pageY+10+Number($("#qTip").height()))<($(window).height()+$(window).scrollTop())) $("#qTip").css("top", e.pageY + 10 );
+                else $("#qTip").css("top", e.pageY - 10 - Number($("#qTip").height()));
+                if(e.pageX<($(window).width()*2/3)) $("#qTip").css("left", e.pageX + 20 );
+                else $("#qTip").css("left", e.pageX - 20 - Number($("#qTip").width()));
+            }
+		}
+	});
+	$("[tiptitle]").live("mousemove",function(e) {
+        if((e.pageY+10+Number($("#qTip").height()))<($(window).height()+$(window).scrollTop())) $("#qTip").css("top", e.pageY + 10 );
+		else $("#qTip").css("top", e.pageY - 10 - Number($("#qTip").height()));
+        if(e.pageX<($(window).width()*2/3)) $("#qTip").css("left", e.pageX + 20 );
+		else $("#qTip").css("left", e.pageX - 20 - Number($("#qTip").width()));
+    }).live("mouseout",function() {
+        $(this).attr("title",$(this).attr("tiptitle"));
+        $("#qTip").hide();
+    });
+    $("table.sortable").tablesorter();});
+function show_names(c)
+     {
+      if(c)
+      {
+       $("li.teacher_name").hide();
+       $("span.teacher_name").hide();
+       $("li."+c).show();
+       $("span."+c).show();
+      }
+      else
+      {
+       $("li.teacher_name").show();
+       $("span.teacher_name").show();
+      }
+     };</script><div id="program_content_div" class="clear"><br/><table class="data_table" style="margin:auto"><thead><tr role="row"><th>Õppeaasta</th><th>Periood</th><th>Algus</th><th>Lõpp</th><th>Grupid</th><th>Õpetajad</th><th>Ruumid</th></tr></thead><tbody><tr role="row"><td align="center">2017/2018</td><td align="center">II</td><td data-value="1508706000" align="right">23.10.2017</td><td data-value="1509224400" align="right">29.10.2017</td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/grupid?nadal=23.10.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Gruppide tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=23.10.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Õpetajate tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/ruumid?nadal=23.10.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Ruumide tunniplaanid" alt="kalender.png" /></a></td></tr><tr role="row"><td align="center">2017/2018</td><td align="center">II</td><td data-value="1509314400" align="right">30.10.2017</td><td data-value="1509832800" align="right">05.11.2017</td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/grupid?nadal=30.10.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Gruppide tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=30.10.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Õpetajate tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/ruumid?nadal=30.10.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Ruumide tunniplaanid" alt="kalender.png" /></a></td></tr><tr role="row"><td align="center">2017/2018</td><td align="center">II</td><td data-value="1509919200" align="right">06.11.2017</td><td data-value="1510437600" align="right">12.11.2017</td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/grupid?nadal=06.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Gruppide tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=06.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Õpetajate tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/ruumid?nadal=06.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Ruumide tunniplaanid" alt="kalender.png" /></a></td></tr><tr role="row"><td align="center">2017/2018</td><td align="center">III</td><td data-value="1510524000" align="right">13.11.2017</td><td data-value="1511042400" align="right">19.11.2017</td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/grupid?nadal=13.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Gruppide tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=13.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Õpetajate tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/ruumid?nadal=13.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Ruumide tunniplaanid" alt="kalender.png" /></a></td></tr><tr role="row" class="plan_active"><td align="center">2017/2018</td><td align="center">III</td><td data-value="1511128800" align="right">20.11.2017</td><td data-value="1511647200" align="right">26.11.2017</td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/grupid?nadal=20.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Gruppide tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Õpetajate tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/ruumid?nadal=20.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Ruumide tunniplaanid" alt="kalender.png" /></a></td></tr><tr role="row"><td align="center">2017/2018</td><td align="center">III</td><td data-value="1511733600" align="right">27.11.2017</td><td data-value="1512252000" align="right">03.12.2017</td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/grupid?nadal=27.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Gruppide tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=27.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Õpetajate tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/ruumid?nadal=27.11.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Ruumide tunniplaanid" alt="kalender.png" /></a></td></tr><tr role="row"><td align="center">2017/2018</td><td align="center">III</td><td data-value="1512338400" align="right">04.12.2017</td><td data-value="1512856800" align="right">10.12.2017</td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/grupid?nadal=04.12.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Gruppide tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=04.12.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Õpetajate tunniplaanid" alt="kalender.png" /></a></td><td align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/ruumid?nadal=04.12.2017#vaatamine" class="img_ico_link"><img src="/img/kalender.png" title="Ruumide tunniplaanid" alt="kalender.png" /></a></td></tr></tbody></table><a name="vaatamine"></a><h3>Õpetajad</h3><p align="center"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=13.11.2017#vaatamine" class="img_ico_link"><img src="/img/ico_left.png" style="vertical-align: bottom" title="Eelmine nädal" alt="ico_left.png" /></a>2017/2018, III periood, 20.11.2017-26.11.2017<a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=27.11.2017#vaatamine" class="img_ico_link"><img src="/img/ico_right.png" style="vertical-align: bottom" title="Järgmine nädal" alt="ico_right.png" /></a></p><div name=".tahestik" class="tahestik"><input type="button" id="" name="" value="Kõik" title="" class="form-button form-button" onClick="show_names('')" /><input type="button" id="" name="" value="A" title="" class="form-button form-button" onClick="show_names('algus_A')" /><input type="button" id="" name="" value="H" title="" class="form-button form-button" onClick="show_names('algus_H')" /><input type="button" id="" name="" value="J" title="" class="form-button form-button" onClick="show_names('algus_J')" /><input type="button" id="" name="" value="K" title="" class="form-button form-button" onClick="show_names('algus_K')" /><input type="button" id="" name="" value="L" title="" class="form-button form-button" onClick="show_names('algus_L')" /><input type="button" id="" name="" value="M" title="" class="form-button form-button" onClick="show_names('algus_M')" /><input type="button" id="" name="" value="N" title="" class="form-button form-button" onClick="show_names('algus_N')" /><input type="button" id="" name="" value="P" title="" class="form-button form-button" onClick="show_names('algus_P')" /><input type="button" id="" name="" value="R" title="" class="form-button form-button" onClick="show_names('algus_R')" /><input type="button" id="" name="" value="S" title="" class="form-button form-button" onClick="show_names('algus_S')" /><input type="button" id="" name="" value="T" title="" class="form-button form-button" onClick="show_names('algus_T')" /><input type="button" id="" name="" value="U" title="" class="form-button form-button" onClick="show_names('algus_U')" /><input type="button" id="" name="" value="V" title="" class="form-button form-button" onClick="show_names('algus_V')" /><input type="button" id="" name="" value="Z" title="" class="form-button form-button" onClick="show_names('algus_Z')" /><input type="button" id="" name="" value="Õ" title="" class="form-button form-button" onClick="show_names('algus__C3_95')" /></div><table class="data_table w_100 footable" style="margin:auto"><thead><tr role="row"><th colspan="4">Õpetaja</th></tr></thead><tbody><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"></tr><tr role="row"><td><span class="teacher_name algus_A" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=1643#vaatamine">Ahtijäinen, Ahko</a></span><span class="teacher_name algus_A" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=11#vaatamine">Allik, Sille</a></span><span class="teacher_name algus_A" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=Anneli+Manglus#vaatamine">Anneli Manglus</a></span><span class="teacher_name algus_H" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=Hille+Volberg#vaatamine">Hille Volberg</a></span><span class="teacher_name algus_H" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=16#vaatamine">Hirschon, Renate</a></span><span class="teacher_name algus_H" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2589#vaatamine">Hurt, Ulrika</a></span><span class="teacher_name algus_J" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=Juta+M%C3%B5ts#vaatamine">Juta Mõts</a></span><span class="teacher_name algus_K" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2091#vaatamine">Kadai, Üllar</a></span><span class="teacher_name algus_K" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=1341#vaatamine">Kaljuvee, Olver</a></span><span class="teacher_name algus_K" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=Kati+Otepalu#vaatamine">Kati Otepalu</a></span><span class="teacher_name algus_K" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=Katrin+Uffert#vaatamine">Katrin Uffert</a></span><span class="teacher_name algus_K" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2210#vaatamine">Kuld, Aivo</a></span><span class="teacher_name algus_K" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=32#vaatamine">Kuutma, Rainer</a></span><span class="teacher_name algus_L" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=Leili+Siilivask#vaatamine">Leili Siilivask</a></span><span class="teacher_name algus_L" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=886#vaatamine">Leppik, Peep</a></span><span class="teacher_name algus_L" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2948#vaatamine">Liivak, Reelika</a></span><span class="teacher_name algus_L" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=48#vaatamine">Looga, Arnold</a></span><span class="teacher_name algus_L" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=3454#vaatamine">Loos, Kaidi</a></span><span class="teacher_name algus_L" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=3506#vaatamine">Luther, Sirje</a></span><span class="teacher_name algus_M" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=Maret+Hunt#vaatamine">Maret Hunt</a></span><span class="teacher_name algus_M" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=1760#vaatamine">Mtchedlishvili, Mikheil</a></span><span class="teacher_name algus_M" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=4216#vaatamine">Mängel, Aili</a></span><span class="teacher_name algus_M" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=3138#vaatamine">Mõts, Juta</a></span><span class="teacher_name algus_N" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=56#vaatamine">Nukk, Anti</a></span><span class="teacher_name algus_P" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2571#vaatamine">Pai, Toomas</a></span><span class="teacher_name algus_R" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=4203#vaatamine">Ragun, Reno</a></span><span class="teacher_name algus_R" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=4003#vaatamine">Rinken, Sulev</a></span><span class="teacher_name algus_R" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=1834#vaatamine">Roon, Janno</a></span><span class="teacher_name algus_R" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=3907#vaatamine">Rudenko, Andrei</a></span><span class="teacher_name algus_R" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2874#vaatamine">Ruukel, Erko</a></span><span class="teacher_name algus_S" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=4239#vaatamine">Sikk, Maria</a></span><span class="teacher_name algus_S" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=Silvia+Cakarne#vaatamine">Silvia Cakarne</a></span><span class="teacher_name algus_S" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=1939#vaatamine">Sirel, Kersti</a></span><span class="teacher_name algus_T" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=859#vaatamine">Talvik, Jane</a></span><span class="teacher_name algus_T" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2644#vaatamine">Tammesalu, Marge</a></span><span class="teacher_name algus_T" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=78#vaatamine">Taniloo, Hiie</a></span><span class="teacher_name algus_T" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=3309#vaatamine">Teearu, Kristiina</a></span><span class="teacher_name algus_T" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=81#vaatamine">Tikk, Peeter</a></span><span class="teacher_name algus_T" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=4018#vaatamine">Täht, Henno</a></span><span class="teacher_name algus_T" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2403#vaatamine">Tšepurko, Eva</a></span><span class="teacher_name algus_U" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=3305#vaatamine">Uffert, Katrin</a></span><span class="teacher_name algus_U" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=1847#vaatamine">Ugur, Vidrik</a></span><span class="teacher_name algus_U" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=2268#vaatamine">Unt, Kristel</a></span><span class="teacher_name algus_V" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=87#vaatamine">Vaher, Klaire</a></span><span class="teacher_name algus_V" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=3903#vaatamine">Vaiksoo, Aivo</a></span><span class="teacher_name algus_Z" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=4332#vaatamine">Zeel, Olesja</a></span><span class="teacher_name algus__C3_95" style="display:block;width:175px;float:left"><a href="https://vkok.siseveeb.ee/veebivormid/tunniplaan/opetajad?nadal=20.11.2017&opetaja=%C3%95ie+Kiis#vaatamine">Õie Kiis</a></span></td></tr></tbody></table></div><div id="shadow_all" style="z-index:99"></div><div class="dialog_div" style="position:absolute;display:none;z-index:100;background-color:#FFFFFF;padding:20px;" id="dialog_div"></div></div></div></body></html>
